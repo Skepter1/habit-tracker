@@ -1,3 +1,4 @@
+import { supabase } from "@/lib/supabase";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
@@ -21,6 +22,24 @@ export default function AuthScreen() {
     if (password.length < 6) {
       setError("Password must be at least 6 characters long.");
       return;
+    }
+
+    if (isSignUp) {
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      if (signUpError) {
+        setError(`Error signing up: ${signUpError}`);
+      }
+    } else {
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (signInError) {
+        setError(`Error signing in: ${signInError}`);
+      }
     }
   };
 
