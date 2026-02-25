@@ -26,25 +26,21 @@ export default function AuthScreen() {
 
     if (isSignUp) {
       const { error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
+        email: email,
+        password: password,
       });
       if (signUpError) {
         setError(`Error signing up: ${signUpError}`);
       }
     } else {
       const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+        email: email,
+        password: password,
       });
       if (signInError) {
         setError(`Error signing in: ${signInError}`);
       }
     }
-  };
-
-  const handleGuest = () => {
-    router.replace("/");
   };
 
   const handleSwitchMode = () => {
@@ -92,13 +88,6 @@ export default function AuthScreen() {
           {isSignUp
             ? "Already have an account? Sign In"
             : "Don't have an account? Sign Up"}
-        </Button>
-        <Button
-          mode="text"
-          onPress={handleGuest}
-          style={styles.switchModeButton}
-        >
-          {"Join as a guest"}
         </Button>
       </View>
     </KeyboardAvoidingView>
