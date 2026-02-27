@@ -79,6 +79,14 @@ export default function addHabit() {
           }))}
         />
       </View>
+      {/* <TextInput
+        label={"Custom frequency in days"}
+        mode="outlined"
+        style={styles.input}
+        value={frequency}
+        onChangeText={setFrequency}
+        activeOutlineColor="#75B06F"
+      /> */}
       <Button
         mode="contained"
         theme={{ colors: { primary: "#75B06F" } }}
