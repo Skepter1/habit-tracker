@@ -1,9 +1,11 @@
 import { useAuth } from "@/lib/authContext";
 import { supabase } from "@/lib/supabase";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { Swipeable } from "react-native-gesture-handler";
 import { Button, Surface, Text } from "react-native-paper";
 
 interface Habit {
@@ -40,6 +42,26 @@ export default function Index() {
     await supabase.auth.signOut();
   };
 
+  const renderRightActions = () => (
+    <View style={styles.swipeActionRight}>
+      <MaterialCommunityIcons
+        name="check-circle-outline"
+        size={32}
+        color={"#fff"}
+      />
+    </View>
+  );
+
+  const renderLeftActions = () => (
+    <View style={styles.swipeActionLeft}>
+      <MaterialCommunityIcons
+        name="trash-can-outline"
+        size={32}
+        color={"#fff"}
+      />
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -50,37 +72,47 @@ export default function Index() {
           Sign Out
         </Button>
       </View>
-      {habits.length === 0 ? (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyStateText}>
-            {" "}
-            No Habits yet. Add your first Habit!
-          </Text>
-        </View>
-      ) : (
-        habits.map((habit, key) => (
-          <Surface key={key} style={styles.card}>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardTitle}>{habit.title}</Text>
-              <Text style={styles.cardDescription}>{habit.description}</Text>
-              <View style={styles.cardFooter}>
-                <View style={styles.streakBadge}>
-                  <AntDesign name="fire" size={18} color="#ff9800" />
-                  <Text style={styles.streakText}>
-                    {habit.streak_count} day streak
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {habits.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyStateText}>
+              {" "}
+              No Habits yet. Add your first Habit!
+            </Text>
+          </View>
+        ) : (
+          habits.map((habit, key) => (
+            <Swipeable
+              key={key}
+              renderLeftActions={renderLeftActions}
+              renderRightActions={renderRightActions}
+            >
+              <Surface style={styles.card}>
+                <View style={styles.cardContent}>
+                  <Text style={styles.cardTitle}>{habit.title}</Text>
+                  <Text style={styles.cardDescription}>
+                    {habit.description}
                   </Text>
+                  <View style={styles.cardFooter}>
+                    <View style={styles.streakBadge}>
+                      <AntDesign name="fire" size={18} color="#ff9800" />
+                      <Text style={styles.streakText}>
+                        {habit.streak_count} day streak
+                      </Text>
+                    </View>
+                    <View style={styles.frequencyBadge}>
+                      <Text style={styles.frequencyText}>
+                        {habit.frequency.charAt(0).toUpperCase() +
+                          habit.frequency.slice(1)}
+                      </Text>
+                    </View>
+                  </View>
                 </View>
-                <View style={styles.frequencyBadge}>
-                  <Text style={styles.frequencyText}>
-                    {habit.frequency.charAt(0).toUpperCase() +
-                      habit.frequency.slice(1)}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </Surface>
-        ))
-      )}
+              </Surface>
+            </Swipeable>
+          ))
+        )}
+      </ScrollView>
     </View>
   );
 }
@@ -162,5 +194,25 @@ const styles = StyleSheet.create({
   },
   emptyStateText: {
     color: "#666666",
+  },
+  swipeActionLeft: {
+    justifyContent: "center",
+    alignItems: "flex-start",
+    flex: 1,
+    backgroundColor: "#e53935",
+    borderRadius: 18,
+    marginTop: 2,
+    marginBottom: 18,
+    paddingLeft: 16,
+  },
+  swipeActionRight: {
+    justifyContent: "center",
+    alignItems: "flex-end",
+    flex: 1,
+    backgroundColor: "#4caf50",
+    borderRadius: 18,
+    marginTop: 2,
+    marginBottom: 18,
+    paddingRight: 16,
   },
 });
