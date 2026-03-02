@@ -19,7 +19,7 @@ function RootLayoutNav() {
       // Zalogowany, a próbuje wejść na Auth -> przenieś do głównej
       router.replace("/(tabs)");
     }
-  }, [session, initialized, segments]);
+  }, [session, initialized, segments, router]);
 
   return <Stack screenOptions={{ headerShown: false }} />;
 }

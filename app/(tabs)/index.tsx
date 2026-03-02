@@ -1,7 +1,8 @@
 import { useAuth } from "@/lib/authContext";
 import { supabase } from "@/lib/supabase";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, Surface, Text } from "react-native-paper";
 
@@ -13,38 +14,37 @@ interface Habit {
 }
 
 export default function Index() {
-  const { session, initialized } = useAuth();
+  const { session } = useAuth();
   const [error, setError] = useState("");
   const [habits, setHabits] = useState<Habit[]>([]);
 
-  const fetchTasks = async () => {
-    const { error: fetchError, data } = await supabase
-      .from("habit-db")
-      .select("*")
-      .order("user_id");
+  useFocusEffect(
+    useCallback(() => {
+      const fetchTasks = async () => {
+        const { error: fetchError, data } = await supabase
+          .from("habit-db")
+          .select("*")
+          .order("user_id");
 
-    if (error) {
-      setError(`Error: ${fetchError}`);
-      return;
-    }
+        if (fetchError) {
+          return;
+        }
 
-    setHabits(data!);
-    console.log(habits);
-  };
+        setHabits(data);
+      };
+      fetchTasks();
+    }, [session?.user]),
+  );
 
   const handleSingOut = async () => {
     await supabase.auth.signOut();
   };
 
-  useEffect(() => {
-    fetchTasks();
-  }, [session?.user]);
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text variant="headlineSmall" style={styles.title}>
-          Today's Habits
+          Today`s Habits
         </Text>
         <Button mode="text" onPress={handleSingOut} icon={"logout"}>
           Sign Out
@@ -54,13 +54,13 @@ export default function Index() {
         <View style={styles.emptyState}>
           <Text style={styles.emptyStateText}>
             {" "}
-            No Habits ye. Add your first Habit!
+            No Habits yet. Add your first Habit!
           </Text>
         </View>
       ) : (
         habits.map((habit, key) => (
-          <Surface style={styles.card}>
-            <View key={key} style={styles.cardContent}>
+          <Surface key={key} style={styles.card}>
+            <View style={styles.cardContent}>
               <Text style={styles.cardTitle}>{habit.title}</Text>
               <Text style={styles.cardDescription}>{habit.description}</Text>
               <View style={styles.cardFooter}>

@@ -14,7 +14,7 @@ import {
 const FREQUENCIES = ["daily", "weekly", "monthly"];
 type Frequency = (typeof FREQUENCIES)[number];
 
-export default function addHabit() {
+export default function AddHabit() {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [frequency, setFrequency] = useState<Frequency>("");
@@ -45,8 +45,8 @@ export default function addHabit() {
       setError("");
 
       router.back();
-    } catch (err) {
-      setError("Wystąpił nieoczekiwany błąd połączenia.");
+    } catch (error) {
+      setError(`Wystąpił nieoczekiwany błąd połączenia. ${error}`);
     }
   };
 
